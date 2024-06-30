@@ -1,0 +1,6 @@
+services:
+  ollama:
+    image: test-selenium:latest
+    container_name: test-selenium
+    volumes:
+      - "./output:/app/output"

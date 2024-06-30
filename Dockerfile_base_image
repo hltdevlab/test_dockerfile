@@ -1,0 +1,37 @@
+FROM python:3.8.5
+
+WORKDIR /app
+
+COPY ./requirements.txt .
+
+RUN pip install -r requirements.txt
+
+RUN wget -O geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
+
+RUN tar -xvf geckodriver.tar.gz
+
+RUN mv geckodriver /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/geckodriver
+
+RUN install -d -m 0755 /etc/apt/keyrings
+
+RUN wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+
+RUN echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+
+# RUN touch /etc/apt/preferences.d/mozilla
+
+# RUN echo $'\n\
+# Package: *\n\
+# Pin: origin packages.mozilla.org\n\
+# Pin-Priority: 1000\n\
+# ' | tee /etc/apt/preferences.d/mozilla
+
+RUN apt update && apt -y install firefox
+
+ENV TZ="Asia/Singapore"
+
+RUN date
+
+CMD ["cat", "./requirements.txt"]
